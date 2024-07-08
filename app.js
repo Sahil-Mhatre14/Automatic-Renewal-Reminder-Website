@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 const axios = require('axios')
-// const welcomeRoutes = require('./welcome'); // Import the routes from welcome.js
+const welcomeRoutes = require('./welcome'); // Import the routes from welcome.js
 require('dotenv').config()
 const { sendMessage, getTextMessageInput } = require("./messageHelper");
 
@@ -11,7 +11,7 @@ const app = express()
 app.use(express.static("public"))
 app.use(bodyParser.urlencoded({extended: true}))
 app.set('view engine', 'ejs')
-// app.use('/welcome', welcomeRoutes); // Use the welcome routes
+app.use('/welcome', welcomeRoutes); // Use the welcome routes
 
 mongoose.connect("mongodb://localhost:27017/reminder_db")
 
@@ -75,43 +75,13 @@ app.get("/delete", function(req, res) {
 })
 
 app.get("/send-message", function(req, res) {
-    var apiUrl = 'http://localhost:3000/message'
+    var apiUrl = 'http://localhost:3000/welcome/send-message'
     axios.post(apiUrl, {}).then((res) => {
-        console.log("Welcome API called successfully")
+        console.log("Welcome API called successfully", res.data)
     }).catch((err) => {
         console.log("Error while calling welcome API", err)
     })
 })
-
-app.post('/message', async function(req, res, next) {
-    var data = getTextMessageInput(process.env.RECIPIENT_WAID, 'Welcome to the Movie Ticket Demo App for Node.js!');
-    console.log("data", data)
-    // sendMessage(data)
-    //   .then(function (response) {
-    //   //   res.redirect('/catalog');
-    //     console.log("Message sent successfully")
-    //     return;
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //     return;
-    //   });
-
-    const apiUrl = `https://graph.facebook.com/${process.env.VERSION}/${process.env.PHONE_NUMBER_ID}/messages`;
-  try {
-    const response = await axios.post(apiUrl, data, {
-      headers: {
-        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    });
-    const result = response.data
-    console.log("Result", result)
-    return res.status(200).json(result)
-  } catch (error) {
-    console.log("Error >>", error);
-  }
-  });
 
 
 app.listen(3000, function() {
