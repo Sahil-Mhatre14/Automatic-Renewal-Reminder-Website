@@ -83,6 +83,24 @@ app.get("/send-message", function(req, res) {
     })
 })
 
+app.get("/expiring-policy", async function(req, res) {
+    const today = new Date();
+    const sevenDaysFromToday = new Date(today);
+    sevenDaysFromToday.setDate(today.getDate() + 7);
+
+    try {
+        const customers = await Customer.find({
+            policy_expiry_date: {
+                $lte: sevenDaysFromToday
+            }
+        })
+        console.log('Customers with policies expiring within 7 days:', customers);
+        res.json(customers)
+    } catch (error) {
+        console.log("Error while finding customers", error)
+    }
+})
+
 
 app.listen(3000, function() {
     console.log("Server started on port 3000")
