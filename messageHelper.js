@@ -1,27 +1,16 @@
 var axios = require("axios");
 
-function sendMessage(data) {
-  //   var config = {
-  //     method: 'post',
-  //     url: `https://graph.facebook.com/${process.env.VERSION}/${process.env.PHONE_NUMBER_ID}/messages`,
-  //     headers: {
-  //       'Authorization': `Bearer ${process.env.ACCESS_TOKEN}`,
-  //       'Content-Type': 'application/json'
-  //     },
-  //     data: data
-  //   };
-
-  //   return axios(config)
+async function sendMessage(data) {
   const apiUrl = `https://graph.facebook.com/${process.env.VERSION}/${process.env.PHONE_NUMBER_ID}/messages`;
   try {
-    const response = axios.post(apiUrl, data, {
+    const response = await axios.post(apiUrl, data, {
       headers: {
         Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
         "Content-Type": "application/json",
       },
     });
     const result = response.data
-    console.log("Result", result)
+    console.log("Result")
     return {data: result}
   } catch (error) {
     console.log("Error >>", error.message);

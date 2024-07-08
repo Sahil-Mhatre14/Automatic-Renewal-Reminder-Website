@@ -9,22 +9,18 @@ router.use(bodyParser.json());
 
 router.post("/send-message", async function (req, res, next) {
   var data = getTextMessageInput(process.env.RECIPIENT_WAID, 'Welcome to the Movie Ticket Demo App for Node.js!');
-  console.log("data", data)
-
-  const apiUrl = `https://graph.facebook.com/${process.env.VERSION}/${process.env.PHONE_NUMBER_ID}/messages`;
-  try {
-    const response = await axios.post(apiUrl, data, {
-      headers: {
-        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    });
-    const result = response.data;
-    console.log("Result", result);
-    return res.status(200).json(result);
-  } catch (error) {
-    console.log("Error >>", error);
-  }
+  sendMessage(data)
+  .then(function (response) {
+    res.status(200).json(response.data);
+    return;
+  })
+  .catch(function (error) {
+    console.log("Error while sending message", error);
+    console.log(error.response.data);
+    res.sendStatus(500);
+    return;
+  });
+  
 });
 
 module.exports = router;
